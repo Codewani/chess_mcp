@@ -30,6 +30,7 @@ class CHESSAPIURLS:
         return self.base_url + f"player/{username}/games/archives"
 
     def player_games_archive(self, username: str, year: str, month: str) -> str:
+        month = month.zfill(2)
         return self.base_url + f"player/{username}/games/{year}/{month}"
 
     def player_games_pgn(self, username: str, year: str, month: str) -> str:
