@@ -67,6 +67,58 @@ async def main():
 asyncio.run(main())
 ```
 
+## Running MCP with Claude
+
+You can run the FastMCP tools and expose them to an LLM backend such as Anthropic Claude. The exact command flags depend on your `mcp` CLI version and how you wire model providers. A minimal flow looks like this:
+
+1. Install the MCP CLI (if not already):
+
+```bash
+python -m pip install "mcp[cli]"  # already listed in pyproject.toml
+```
+
+2. Export your Anthropic API key (example):
+
+```bash
+export ANTHROPIC_API_KEY="sk-..."
+```
+
+3. Start the MCP server specifying Claude as the model (example — adjust flags to match your `mcp` CLI):
+
+```bash
+# Example; your CLI may use a different flag. Replace `claude-3` with the model you want.
+mcp serve --model claude-3
+```
+
+Notes:
+
+- Replace `claude-3` with the exact model name your Anthropic plan provides (for example `claude-2`, `claude-3`, etc.).
+- If your `mcp` CLI uses a different subcommand (`run`, `start`, or similar), use that instead. Check `mcp --help` for the correct usage.
+- You can also place environment variables in a `.env` file and load them prior to running the server.
+
+## Using "uv" (uvicorn) for local ASGI serving
+
+If you need to run an ASGI app (for example the MCP server exposes an ASGI app object), use an ASGI server such as `uvicorn`. Many developers create a short alias `uv` that wraps `uvicorn` — if you have that alias, `uv` can be used interchangeably with `uvicorn` in examples below.
+
+Install `uvicorn`:
+
+```bash
+python -m pip install uvicorn
+```
+
+Run the app with `uvicorn` (or `uv` if you have an alias):
+
+```bash
+# If the MCP project exposes `app` in module `main`, run:
+uvicorn main:app --reload
+# or, if you prefer an alias and have it set up:
+uv main:app --reload
+```
+
+When using `uvicorn` in development, `--reload` makes it pick up code changes automatically. In production, run without `--reload` and configure workers appropriately.
+
+If you want, I can add a short `mcp` + `uvicorn` example specific to how your MCP app is exported from `main.py`.
+
 ## Configuration
 
 - `HEADERS`: The code uses a global `HEADERS` constant (e.g. `{ "User-Agent": "Me" }`). You can externalize this to environment variables or a config file if needed.
